@@ -1,6 +1,8 @@
 import Mode from 'frontmatter-markdown-loader/mode'
+const PrismicConfig = require('./prismic.config')
 
-const routerBase = process.env.DEPLOY_ENV === 'GH_PAGES'
+const routerBase =
+  process.env.DEPLOY_ENV === 'GH_PAGES'
     ? {
         router: {
           base: '/nuxt-template/'
@@ -24,7 +26,17 @@ export default {
         content: process.env.npm_package_description || ''
       }
     ],
-    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }]
+    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
+    script: [
+      {
+        innerHTML:
+          '{ window.prismic = { endpoint: "' +
+          PrismicConfig.apiEndpoint +
+          '"} }'
+      },
+      { src: '//static.cdn.prismic.io/prismic.min.js' }
+    ],
+    __dangerouslyDisableSanitizers: ['script']
   },
   /*
    ** Customize the progress-bar color
@@ -38,7 +50,11 @@ export default {
    ** Plugins to load before mounting the App
    */
   ...routerBase,
-  plugins: [],
+  plugins: [
+    '~/plugins/link-resolver.js',
+    '~/plugins/html-serializer.js',
+    '~/plugins/prismic-vue.js'
+  ],
   /*
    ** Nuxt.js dev-modules
    */
@@ -61,6 +77,7 @@ export default {
   /*
    ** Build configuration
    */
+
   build: {
     /*
      ** You can extend webpack config here
@@ -72,7 +89,8 @@ export default {
         options: {
           mode: [Mode.VUE_COMPONENT]
         }
-      })
+      }),
+        (config.resolve.alias['vue'] = 'vue/dist/vue.common')
     }
   }
 }
