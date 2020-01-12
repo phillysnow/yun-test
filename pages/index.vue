@@ -1,127 +1,90 @@
 <template>
-  <div>
-    <!-- <prismic-edit-button :documentId="documentId"/> -->
-    <!-- <h1 class="blog-title">
+  <!-- <prismic-edit-button :documentId="documentId"/> -->
+  <!-- <h1 class="blog-title">
       {{ $prismic.richTextAsPlain(home.heading) }}
     </h1> -->
-    <article>
-      <!-- INTRODUCTION -->
-      <div class="introduction">
-        <prismic-rich-text :field="home.bio" />
-      </div>
+  <article>
+    <!-- INTRODUCTION -->
+    <div class="introduction">
+      <prismic-rich-text :field="home.bio" />
+    </div>
 
-      <div class="projects">
-        <!-- TABLE OF CONTENTS -->
-        <div v-if="projects.length !== 0" class="index">
-          <!-- GROUP 1 -->
-          <div class="group">
-            <div
-              v-for="(project, i) in projects"
-              :key="project.id"
-              v-bind:project="project"
-              class="item"
-            >
-              <a :href="'#key' + i">
-                {{ $prismic.richTextAsPlain(project.data.title) }}
-                <span class="date">
-                  <span v-if="project.data.start_date">
-                    {{ project.data.start_date }}
-                  </span>
-                  <span v-if="project.data.end_date">
-                    {{ project.data.end_date }}
-                  </span>
-                </span>
-              </a>
-            </div>
-          </div>
-          <!-- GROUP 2 -->
-          <div class="group">
-            <div
-              v-for="(project, i) in projects"
-              :key="project.id + project.id"
-              v-bind:project="project"
-              class="item"
-            >
-              <a :href="'#key' + i">
-                {{ $prismic.richTextAsPlain(project.data.title) }}
-                <span class="date">
-                  <span v-if="project.data.start_date">
-                    {{ project.data.start_date }}
-                  </span>
-                  <span v-if="project.data.end_date">
-                    {{ project.data.end_date }}
-                  </span>
-                </span>
-              </a>
-            </div>
-          </div>
-          <!-- GROUP 3 -->
-          <div class="group">
-            <div
-              v-for="(project, i) in projects"
-              :key="project.id + project.id + project.id"
-              v-bind:project="project"
-              class="item"
-            >
-              <a :href="'#key' + i">
-                {{ $prismic.richTextAsPlain(project.data.title) }}
-                <span class="date">
-                  <span v-if="project.data.start_date">
-                    {{ project.data.start_date }}
-                  </span>
-                  <span v-if="project.data.end_date">
-                    {{ project.data.end_date }}
-                  </span>
-                </span>
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <!-- ALL PROJECTS -->
-        <div class="project">
+    <div class="projects">
+      <!-- TABLE OF CONTENTS -->
+      <div v-if="projects.length !== 0" class="index">
+        <div
+          class="group"
+          v-bind:style="{
+            transform: `translate(${-percentage}%) translate3d(0px, 0px, 0px)`
+          }"
+          v-for="index in 5"
+          :key="index"
+        >
+          <!-- GROUP -->
           <div
             v-for="(project, i) in projects"
             :key="project.id"
             v-bind:project="project"
             class="item"
-            :id="'key' + i"
+            v-bind:style="{
+              transform: `translate3d(${(i * num) / 20}px, 0, 0)`
+            }"
           >
-            <div class="title">
+            <a :href="'#key' + i">
               {{ $prismic.richTextAsPlain(project.data.title) }}
               <span class="date">
                 <span v-if="project.data.start_date">
-                  {{ project.data.start_date }}
+                  {{ project.data.start_date | onlyYear }}
                 </span>
                 <span v-if="project.data.end_date">
-                  {{ project.data.end_date }}
+                  {{ project.data.end_date | onlyYear }}
                 </span>
               </span>
-            </div>
-
-            <div v-if="project.data.description" class="description">
-              <prismic-rich-text :field="project.data.description" />
-            </div>
-
-            <div class="media"  v-dragscroll>
-              <img
-                v-for="(item, i) in project.data.gallery"
-                :key="i"
-                :src="item.image.url"
-                :alt="item.image.alt"
-              />
-            </div>
+            </a>
           </div>
         </div>
       </div>
-    </article>
-  </div>
+
+      <!-- ALL PROJECTS -->
+      <div class="project">
+        <div
+          v-for="(project, i) in projects"
+          :key="project.id"
+          v-bind:project="project"
+          class="item"
+          :id="'key' + i"
+        >
+          <div class="title">
+            {{ $prismic.richTextAsPlain(project.data.title) }}
+            <span class="date">
+              <span v-if="project.data.start_date">
+                {{ project.data.start_date | onlyYear }}
+              </span>
+              <span v-if="project.data.end_date">
+               - {{ project.data.end_date | onlyYear }}
+              </span>
+            </span>
+          </div>
+
+          <div v-if="project.data.description" class="description">
+            <prismic-rich-text :field="project.data.description" />
+          </div>
+
+          <div class="media" v-dragscroll>
+             <img v-for="(item, i) in project.data.gallery" :key="i" :src="`${item.image.url},w=600&h=600`" :alt="item.image.alt">
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
 </template>
 
 <script>
 import Prismic from 'prismic-javascript'
 import PrismicConfig from '~/prismic.config.js'
 import { dragscroll } from 'vue-dragscroll'
+import moment from 'moment'
+// Text balancer
 
 export default {
   directives: {
@@ -129,6 +92,8 @@ export default {
   },
   data() {
     return {
+      percentage: 0,
+      num: 0,
       fields: {
         title: null
       }
@@ -160,7 +125,31 @@ export default {
       error({ statusCode: 404, message: 'Page not found' })
     }
   },
-  created() {}
+  methods: {
+    handleScroll(event) {
+      // Any code to be executed when the window is scrolled
+      const elTop = document.querySelector('.group').offsetTop
+      const winTop = window.scrollY - window.innerHeight
+
+      this.num = elTop - winTop
+      this.percentage = (100 / elTop) * winTop
+    }
+  },
+  created() {
+    window.addEventListener('scroll', this.handleScroll)
+  },
+  destroyed() {
+    window.removeEventListener('scroll', this.handleScroll)
+  },
+  mounted() {
+    this.handleScroll()
+  },
+  filters: {
+    onlyYear(val) {
+      let date = new Date(val)
+      return date.getFullYear()
+    }
+  }
 }
 </script>
 
@@ -271,8 +260,8 @@ article {
           cursor: grab;
 
           &::-webkit-scrollbar {
-  display: none;
-}
+            display: none;
+          }
 
           img {
             opacity: 0.5;
