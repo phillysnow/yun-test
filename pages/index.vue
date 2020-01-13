@@ -1,8 +1,4 @@
 <template>
-  <!-- <prismic-edit-button :documentId="documentId"/> -->
-  <!-- <h1 class="blog-title">
-      {{ $prismic.richTextAsPlain(home.heading) }}
-    </h1> -->
   <article>
     <!-- INTRODUCTION -->
     <div class="introduction">
