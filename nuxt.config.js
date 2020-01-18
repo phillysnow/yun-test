@@ -5,7 +5,7 @@ const routerBase =
   process.env.DEPLOY_ENV === 'GH_PAGES'
     ? {
         router: {
-          base: '/nuxt-template/'
+          base: '/Yun-2020/'
         }
       }
     : {}
