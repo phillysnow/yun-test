@@ -5,7 +5,7 @@ const routerBase =
   process.env.DEPLOY_ENV === 'GH_PAGES'
     ? {
         router: {
-          base: '/Yun-2020/'
+          base: '/'
         }
       }
     : {}
@@ -49,10 +49,7 @@ export default {
   /*
    ** Plugins to load before mounting the App
    */
-  // ...routerBase,
-  router: {
-    base: '/Yun-2020/'
-  },
+  ...routerBase,
   plugins: [
     '~/plugins/link-resolver.js',
     '~/plugins/html-serializer.js',
