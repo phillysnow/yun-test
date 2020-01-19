@@ -49,7 +49,10 @@ export default {
   /*
    ** Plugins to load before mounting the App
    */
-  ...routerBase,
+  // ...routerBase,
+  router: {
+    base: '/Yun-2020/'
+  },
   plugins: [
     '~/plugins/link-resolver.js',
     '~/plugins/html-serializer.js',
