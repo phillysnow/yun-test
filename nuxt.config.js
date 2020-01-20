@@ -6,7 +6,11 @@ const routerBase =
           base: '/Yun-2020'
         }
       }
-    : {}
+    : {
+      router: {
+        base: './'
+      }
+    }
 
 export default {
   mode: 'spa',
