@@ -27,7 +27,7 @@
             }"
           >
             <a :href="'#key' + i">
-              {{ $prismic.richTextAsPlain(project.data.title) }}
+              {{ $prismic.asText(project.data.title) }}
               <span class="date">
                 <span v-if="project.data.start_date">
                   {{ project.data.start_date | onlyYear }}
@@ -51,7 +51,7 @@
           :id="'key' + i"
         >
           <div class="title">
-            {{ $prismic.richTextAsPlain(project.data.title) }}
+            {{ $prismic.asText(project.data.title) }}
             <span class="date">
               <span v-if="project.data.start_date">
                 {{ project.data.start_date | onlyYear }}
@@ -66,7 +66,7 @@
             <prismic-rich-text :field="project.data.description" />
           </div>
 
-          <div class="media" v-dragscroll>
+          <div  v-if="project.data.gallery.image" class="media" v-dragscroll>
              <img v-for="(item, i) in project.data.gallery" :key="i" :src="`${item.image.url},w=600&h=600`" :alt="item.image.alt">
           </div>
         </div>
@@ -76,8 +76,6 @@
 </template>
 
 <script>
-import Prismic from 'prismic-javascript'
-import PrismicConfig from '~/prismic.config.js'
 import { dragscroll } from 'vue-dragscroll'
 import moment from 'moment'
 // Text balancer
@@ -95,21 +93,18 @@ export default {
       }
     }
   },
-  async asyncData({ context, error, req }) {
+  async asyncData({ $prismic, error }) {
     try {
       // Query to get API object
-      const api = await Prismic.getApi(PrismicConfig.apiEndpoint, { req })
       // Query to get blog home content
-      const document = await api.getSingle('homepage-test-')
+      const document = await $prismic.api.getSingle('homepage-test-')
       let home = document.data
 
-      const projects = await api.query(
-        Prismic.Predicates.at('document.type', 'projects'),
+      const projects = await $prismic.api.query(
+        $prismic.predicates.at('document.type', 'projects'),
         { orderings: '[my.post.date desc]' }
       )
 
-      // Load the edit button
-      if (process.client) window.prismic.setupEditButton()
       // Returns data to be used in template
       return {
         home,

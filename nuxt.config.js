@@ -1,6 +1,4 @@
 import Mode from 'frontmatter-markdown-loader/mode'
-const PrismicConfig = require('./prismic.config')
-
 const routerBase =
   process.env.DEPLOY_ENV === 'GH_PAGES'
     ? {
@@ -26,17 +24,7 @@ export default {
         content: 'Yun Ingrid Lee is an artist, composer, and performer interested in invisibility, noise, and collective sensing.'
       }
     ],
-    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
-    script: [
-      {
-        innerHTML:
-          '{ window.prismic = { endpoint: "' +
-          PrismicConfig.apiEndpoint +
-          '"} }'
-      },
-      { src: '//static.cdn.prismic.io/prismic.min.js' }
-    ],
-    __dangerouslyDisableSanitizers: ['script']
+    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }]
   },
   /*
    ** Customize the progress-bar color
@@ -50,30 +38,32 @@ export default {
    ** Plugins to load before mounting the App
    */
   ...routerBase,
-  plugins: [
-    '~/plugins/link-resolver.js',
-    '~/plugins/html-serializer.js',
-    '~/plugins/prismic-vue.js'
+  plugins: [],
+
+
+  prismic: {
+    endpoint: 'https://yuneel.cdn.prismic.io/api/v2'
+  },
+  /*
+  ** Nuxt.js dev-modules
+  */
+ buildModules: [],
+  /*
+  ** Nuxt.js modules
+  */
+ modules: [
+   // Doc: https://axios.nuxtjs.org/usage
+   '@nuxtjs/axios',
+   '@nuxtjs/pwa',
+   // Doc: https://github.com/nuxt-community/dotenv-module
+   '@nuxtjs/dotenv',
+   '@nuxtjs/prismic'
   ],
   /*
-   ** Nuxt.js dev-modules
-   */
-  buildModules: [],
-  /*
-   ** Nuxt.js modules
-   */
-  modules: [
-    // Doc: https://axios.nuxtjs.org/usage
-    '@nuxtjs/axios',
-    '@nuxtjs/pwa',
-    // Doc: https://github.com/nuxt-community/dotenv-module
-    '@nuxtjs/dotenv'
-  ],
-  /*
-   ** Axios module configuration
-   ** See https://axios.nuxtjs.org/options
-   */
-  axios: {},
+  ** Axios module configuration
+  ** See https://axios.nuxtjs.org/options
+  */
+ axios: {},
   /*
    ** Build configuration
    */
