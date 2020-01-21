@@ -8,7 +8,7 @@ const routerBase =
       }
     : {
       router: {
-        base: './'
+        base: '/'
       }
     }
 
